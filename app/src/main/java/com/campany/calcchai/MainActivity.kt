@@ -1,47 +1,59 @@
 package com.campany.calcchai
 
 import android.os.Bundle
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Button
 import android.widget.EditText
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val editBill = findViewById<EditText>(R.id.editBill)
-        val seekBarPercent = findViewById<SeekBar>(R.id.seekBarPercent)
-        val textPercent = findViewById<TextView>(R.id.textPercent)
-        val textTip = findViewById<TextView>(R.id.textTip)
-        val textTotal = findViewById<TextView>(R.id.textTotal)
+        val editUrl = findViewById<EditText>(R.id.editUrl)
+        val buttonGo = findViewById<Button>(R.id.buttonGo)
+        val buttonBack = findViewById<Button>(R.id.buttonBack)
 
-        seekBarPercent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                textPercent.text = "Чаевые: $progress%"
+        webView = findViewById(R.id.webView)
 
-                val billText = editBill.text.toString()
+        webView.webViewClient = WebViewClient()
 
-                if (billText.isEmpty()) {
-                    textTip.text = "Чаевые: 0"
-                    textTotal.text = "Итого: 0"
-                } else {
-                    val bill = billText.toDouble()
-                    val tip = bill * progress / 100
-                    val total = bill + tip
+        buttonGo.setOnClickListener {
 
-                    textTip.text = "Чаевые: ${tip.toInt()}"
-                    textTotal.text = "Итого: ${total.toInt()}"
-                }
+            val enteredUrl = editUrl.text.toString().trim()
+
+            if (enteredUrl.isEmpty()) {
+                editUrl.error = "Введите адрес сайта"
+                return@setOnClickListener
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            val url = addHttps(enteredUrl)
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            webView.loadUrl(url)
+        }
+
+        buttonBack.setOnClickListener {
+
+            if (webView.canGoBack()) {
+                webView.goBack()
+            } else {
+                Toast.makeText(this, "Истории нет", Toast.LENGTH_SHORT).show()
+                finish()
             }
-        })
+        }
+    }
+
+    private fun addHttps(url: String): String {
+        return if (url.startsWith("http://") || url.startsWith("https://")) {
+            url
+        } else {
+            "https://$url"
+        }
     }
 }
