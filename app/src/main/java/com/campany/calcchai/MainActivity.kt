@@ -1,9 +1,11 @@
 package com.campany.calcchai
 
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -12,36 +14,47 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val editBill = findViewById<EditText>(R.id.editBill)
-        val seekBarPercent = findViewById<SeekBar>(R.id.seekBarPercent)
-        val textPercent = findViewById<TextView>(R.id.textPercent)
-        val textTip = findViewById<TextView>(R.id.textTip)
-        val textTotal = findViewById<TextView>(R.id.textTotal)
+        val editItem = findViewById<EditText>(R.id.editItem)
+        val buttonAdd = findViewById<Button>(R.id.buttonAdd)
+        val listItems = findViewById<ListView>(R.id.listItems)
 
-        seekBarPercent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                textPercent.text = "Чаевые: $progress%"
+        val shoppingList = ArrayList<String>()
 
-                val billText = editBill.text.toString()
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            shoppingList
+        )
 
-                if (billText.isEmpty()) {
-                    textTip.text = "Чаевые: 0"
-                    textTotal.text = "Итого: 0"
-                } else {
-                    val bill = billText.toDouble()
-                    val tip = bill * progress / 100
-                    val total = bill + tip
+        listItems.adapter = adapter
 
-                    textTip.text = "Чаевые: ${tip.toInt()}"
-                    textTotal.text = "Итого: ${total.toInt()}"
-                }
+        buttonAdd.setOnClickListener {
+
+            val item = editItem.text.toString().trim()
+
+            if (item.isEmpty()) {
+                editItem.error = "Введите название товара"
+                return@setOnClickListener
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            adapter.add(item)
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-        })
+            editItem.text.clear()
+
+            Toast.makeText(this, "Товар добавлен", Toast.LENGTH_SHORT).show()
+        }
+
+        listItems.setOnItemClickListener { _, _, position, _ ->
+
+            val removedItem = adapter.getItem(position)
+
+            adapter.remove(removedItem)
+
+            Toast.makeText(
+                this,
+                "Удалено: $removedItem",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }
