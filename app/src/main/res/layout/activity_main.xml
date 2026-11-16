@@ -8,47 +8,31 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Калькулятор чаевых"
+        android:text="Открыть сайт"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editBill"
+        android:id="@+id/editUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:hint="Введите сумму"
-        android:inputType="numberDecimal" />
+        android:hint="Введите URL"
+        android:inputType="textUri"
+        android:singleLine="true" />
 
-    <TextView
-        android:id="@+id/textPercent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Чаевые: 10%" />
-
-    <SeekBar
-        android:id="@+id/seekBarPercent"
+    <Button
+        android:id="@+id/buttonOpen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="100"
-        android:progress="10" />
+        android:layout_marginTop="20dp"
+        android:text="Открыть в браузере" />
 
     <TextView
-        android:id="@+id/textTip"
-        android:layout_width="wrap_content"
+        android:id="@+id/textResult"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Чаевые: 0"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/textTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Итого: 0"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="20dp"
+        android:text="" />
 
 </LinearLayout>

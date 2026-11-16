@@ -1,9 +1,13 @@
 package com.campany.calcchai
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Button
 import android.widget.EditText
-import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -12,36 +16,43 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val editBill = findViewById<EditText>(R.id.editBill)
-        val seekBarPercent = findViewById<SeekBar>(R.id.seekBarPercent)
-        val textPercent = findViewById<TextView>(R.id.textPercent)
-        val textTip = findViewById<TextView>(R.id.textTip)
-        val textTotal = findViewById<TextView>(R.id.textTotal)
+        val editUrl = findViewById<EditText>(R.id.editUrl)
+        val buttonOpen = findViewById<Button>(R.id.buttonOpen)
+        val textResult = findViewById<TextView>(R.id.textResult)
 
-        seekBarPercent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                textPercent.text = "Чаевые: $progress%"
+        buttonOpen.setOnClickListener {
 
-                val billText = editBill.text.toString()
+            val enteredUrl = editUrl.text.toString().trim()
 
-                if (billText.isEmpty()) {
-                    textTip.text = "Чаевые: 0"
-                    textTotal.text = "Итого: 0"
-                } else {
-                    val bill = billText.toDouble()
-                    val tip = bill * progress / 100
-                    val total = bill + tip
-
-                    textTip.text = "Чаевые: ${tip.toInt()}"
-                    textTotal.text = "Итого: ${total.toInt()}"
-                }
+            if (enteredUrl.isEmpty()) {
+                editUrl.error = "Введите адрес сайта"
+                return@setOnClickListener
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+            val url = addHttps(enteredUrl)
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            textResult.text = "Открываем: $url"
+
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+
+            try {
+                startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(
+                    this,
+                    "Не найдено приложение для открытия ссылки",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        })
+        }
+    }
+
+    private fun addHttps(url: String): String {
+        return if (url.startsWith("http://") || url.startsWith("https://")) {
+            url
+        } else {
+            "https://$url"
+        }
     }
 }
